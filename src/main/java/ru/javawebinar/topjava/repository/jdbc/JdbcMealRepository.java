@@ -55,7 +55,7 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return false;
+        return jdbcTemplate.update("DELETE FROM meals WHERE id=? AND user_id=?", id, userId) != 0;
     }
 
     @Override
@@ -71,6 +71,7 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return null;
+        return jdbcTemplate.query("SELECT * FROM meals WHERE user_id=?  AND date_time >=? " +
+                "AND date_time <? ORDER BY date_time DESC", ROW_MAPPER, userId, startDateTime, endDateTime);
     }
 }
