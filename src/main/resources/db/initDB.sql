@@ -33,4 +33,5 @@ CREATE TABLE  meals
     date_time TIMESTAMP NOT NULL,
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-)
+);
+CREATE UNIQUE INDEX meals_unique_date_time_user_id_idx ON meals(date_time,user_id);
