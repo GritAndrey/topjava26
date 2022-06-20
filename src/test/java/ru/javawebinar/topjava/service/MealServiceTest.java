@@ -100,6 +100,11 @@ public class MealServiceTest {
     }
 
     @Test
+    public void updateInvalidAuthorization() {
+        assertThrows(NotFoundException.class, () -> service.update(meal0, ADMIN_ID));
+    }
+
+    @Test
     public void create() {
         Meal created = service.create(getNew(), USER_ID);
         Integer newId = created.getId();
