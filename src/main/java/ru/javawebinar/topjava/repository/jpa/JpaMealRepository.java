@@ -22,12 +22,18 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return false;
+        return em.createNamedQuery(Meal.DELETE)
+                .setParameter(1, id)
+                .setParameter(2, userId)
+                .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return null;
+        return em.createNamedQuery(Meal.GET_BY_ID, Meal.class)
+                .setParameter(1,id)
+                .setParameter(2,userId)
+                .getResultList().get(0);
     }
 
     @Override
