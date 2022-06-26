@@ -34,8 +34,8 @@ public class JpaMealRepository implements MealRepository {
     @Override
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
-                .setParameter(1, id)
-                .setParameter(2, userId)
+                .setParameter("id", id)
+                .setParameter("userId", userId)
                 .executeUpdate() != 0;
     }
 
@@ -52,14 +52,14 @@ public class JpaMealRepository implements MealRepository {
     @Override
     public List<Meal> getAll(int userId) {
         return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
-                .setParameter(1, userId)
+                .setParameter("userId", userId)
                 .getResultList();
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return em.createNamedQuery(Meal.GET_BETWEEN, Meal.class)
-                .setParameter(1, userId)
+                .setParameter("userId", userId)
                 .setParameter(2, startDateTime)
                 .setParameter(3, endDateTime)
                 .getResultList();
