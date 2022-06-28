@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class JpaMealRepository implements MealRepository {
     @PersistenceContext
     private EntityManager em;
@@ -24,7 +24,7 @@ public class JpaMealRepository implements MealRepository {
         if (meal.isNew()) {
             em.persist(meal);
             return meal;
-        } else if (get(meal.id(),userId) == null) {
+        } else if (get(meal.id(), userId) == null) {
             return null;
         }
         return em.merge(meal);
