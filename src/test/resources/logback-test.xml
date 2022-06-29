@@ -10,11 +10,20 @@
             <pattern>%d{HH:mm:ss.SSS} %-5level %class{50}.%M:%L - %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="consoleSQL" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %class{50}.%M:%L - %boldRed(%msg%n)</pattern>
+        </encoder>
+    </appender>
 
     <logger name="org.postgresql" level="debug"/>
     <logger name="org.springframework.jdbc" level="info"/>
     <logger name="ru.javawebinar.topjava" level="debug"/>
-
+    <logger name="org.hibernate.type" additivity="false">
+        <level value="TRACE"/>
+        <appender-ref ref="consoleSQL"/>
+    </logger>
     <root level="INFO">
         <appender-ref ref="console"/>
     </root>
