@@ -21,4 +21,11 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     int delete(@Param("id") int id, @Param("user_id") int userId);
 
     List<Meal> findAllByDateTimeIsGreaterThanEqualAndDateTimeBeforeAndUserId(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId, Sort sortDatetimeDesc);
+
+    @Query("""
+                    SELECT meal  FROM Meal meal 
+                    LEFT JOIN FETCH meal.user 
+                    WHERE meal.id=:id AND meal.user.id =:userId
+            """)
+    Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 }
