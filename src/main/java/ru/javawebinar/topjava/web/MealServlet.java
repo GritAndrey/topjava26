@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -26,33 +27,23 @@ public class MealServlet extends HttpServlet {
     private MealRestController mealController;
 
     @Override
-    public void init() {
-        //:TODO without spring.profiles.active
-        System.setProperty("spring.profiles.active", "postgres,datajpa");
-        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
-        mealController = springContext.getBean(MealRestController.class);
-    }
-
-    @Override
     public void destroy() {
         springContext.close();
         super.destroy();
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        Meal meal = new Meal(
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
+    public void init() {
 
-        if (StringUtils.hasLength(request.getParameter("id"))) {
-            mealController.update(meal, getId(request));
-        } else {
-            mealController.create(meal);
-        }
-        response.sendRedirect("meals");
+        //System.setProperty("spring.profiles.active", "postgres,datajpa");
+        springContext = new ClassPathXmlApplicationContext(
+                new String[]{"spring/spring-app.xml", "spring/spring-db.xml"},
+                false);
+        springContext.getEnvironment().setActiveProfiles(
+                Profiles.getRepositoryImplementation(),
+                Profiles.getActiveDbProfile());
+        springContext.refresh();
+        mealController = springContext.getBean(MealRestController.class);
     }
 
     @Override
@@ -85,6 +76,22 @@ public class MealServlet extends HttpServlet {
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
             }
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
+
+        if (StringUtils.hasLength(request.getParameter("id"))) {
+            mealController.update(meal, getId(request));
+        } else {
+            mealController.create(meal);
+        }
+        response.sendRedirect("meals");
     }
 
     private int getId(HttpServletRequest request) {
