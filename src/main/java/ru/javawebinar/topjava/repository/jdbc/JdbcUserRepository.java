@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,13 +68,13 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
+        ValidationUtil.validate(user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
         } else if (namedParameterJdbcTemplate.update("""
-                   UPDATE users SET name=:name, email=:email, password=:password, 
+                   UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
                 """, parameterSource) == 0) {
             return null;
@@ -92,7 +93,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("""
-                        SELECT * FROM users 
+                        SELECT * FROM users
                         LEFT JOIN user_roles ON users.id = user_roles.user_id
                         WHERE user_id=?""",
                 ROW_MAPPER, id);
@@ -103,8 +104,8 @@ public class JdbcUserRepository implements UserRepository {
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("""
-                        SELECT * FROM users 
-                        LEFT JOIN user_roles ON users.id =user_roles.user_id 
+                        SELECT * FROM users
+                        LEFT JOIN user_roles ON users.id =user_roles.user_id
                         WHERE email=?"""
                 , ROW_MAPPER, email);
         return DataAccessUtils.singleResult(users);
@@ -113,8 +114,8 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
         return jdbcTemplate.query("""
-                        SELECT * FROM users 
-                        LEFT JOIN user_roles ON users.id = user_roles.user_id 
+                        SELECT * FROM users
+                        LEFT JOIN user_roles ON users.id = user_roles.user_id
                         ORDER BY name, email"""
                 , ROW_MAPPER);
     }
