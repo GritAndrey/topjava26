@@ -13,7 +13,7 @@
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
         <div class="card border-dark">
             <div class="card-body pb-0">
-                <form id="filterForm" method="get" action="meals/filter">
+                <form id="filterForm">
                     <div class="row">
                         <div class="col-2">
                             <label for="startDate"><spring:message code="meal.startDate"/>:</label>
@@ -36,8 +36,13 @@
                                    value="${param.endTime}">
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="submit"><spring:message code="meal.filter"/></button>
                 </form>
+                <div class="card-footer text-right">
+                    <button class="btn btn-primary" onclick="addFilter()">
+                        <span class="fa fa-filter"></span><spring:message code="meal.filter"/></button>
+                    <button class="btn btn-danger" onclick="resetFilter()">
+                        <span class="fa fa-remove"></span><spring:message code="common.cancel"/></button>
+                </div>
             </div>
         </div>
         <br>
@@ -61,15 +66,11 @@
                     <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
                     <tr data-meal-excess="${meal.excess}" id="${meal.id}">
                         <td>
-                                <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
-                                <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
-                                <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
                                 ${fn:formatDateTime(meal.dateTime)}
                         </td>
                         <td>${meal.description}</td>
                         <td>${meal.calories}</td>
                         <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
-<%--                        <td><a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>--%>
                         <td><a class="delete"><span class="fa fa-remove"></span></a></td>
                     </tr>
                 </c:forEach>
@@ -87,19 +88,26 @@
             </div>
             <div class="modal-body">
                 <form id="detailsForm">
-                    <input type="hidden" name="id" value="${meal.id}">
+                    <input type="hidden" name="id" id="id">
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/>:</label>
-                        <input type="datetime-local" class="form-control" placeholder="${meal.dateTime}" name="dateTime" id="dateTime" required>
+                        <input type="datetime-local" class="form-control"
+                               placeholder="<spring:message code="meal.dateTime"/>" name="dateTime"
+                               id="dateTime" required>
                     </div>
                     <div class="form-group">
-                        <label for="description" class="col-form-label"><spring:message code="meal.description"/>:</label>
-                        <input type="text" class="form-control"  placeholder="${meal.description}" size=40 name="description" id="description"
+                        <label for="description" class="col-form-label"><spring:message
+                                code="meal.description"/>:</label>
+                        <input type="text" class="form-control" placeholder="<spring:message code="meal.description"/>"
+                               size=40
+                               name="description" id="description"
                                required>
                     </div>
                     <div class="form-group">
                         <label for="calories" class="col-form-label"><spring:message code="meal.calories"/>:</label>
-                        <input type="number" class="form-control"  placeholder="${meal.calories}" name="calories" id="calories" required>
+                        <input type="number" class="form-control" placeholder="<spring:message code="meal.calories"/>"
+                               name="calories"
+                               id="calories" required>
                     </div>
                 </form>
             </div>

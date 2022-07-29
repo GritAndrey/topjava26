@@ -5,6 +5,21 @@ const ctx = {
     ajaxUrl: mealAjaxUrl,
 };
 
+function addFilter() {
+    $.ajax({
+        type: "GET",
+        url: mealAjaxUrl + "filter",
+        data: $("#filterForm").serialize()
+    }).done(function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+function resetFilter() {
+    $("#filterForm").find(":input").val("");
+    $.get(mealAjaxUrl, updateTable);
+}
+
 // $(document).ready(function () {
 $(function () {
     makeEditable(
