@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DataJpaUserRepository implements UserRepository {
@@ -45,5 +46,10 @@ public class DataJpaUserRepository implements UserRepository {
     @Override
     public User getWithMeals(int id) {
         return crudRepository.getWithMeals(id);
+    }
+
+    @Override
+    public Optional<User> findByEmailIgnoreCase(String email) {
+        return crudRepository.findByEmailIgnoreCase(email);
     }
 }

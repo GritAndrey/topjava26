@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 
 import javax.persistence.QueryHint;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface CrudUserRepository extends JpaRepository<User, Integer> {
@@ -24,4 +25,6 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"meals"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT u FROM User u WHERE u.id=?1")
     User getWithMeals(int id);
+
+    Optional<User> findByEmailIgnoreCase(String email);
 }
